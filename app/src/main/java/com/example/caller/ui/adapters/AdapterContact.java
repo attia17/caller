@@ -1,5 +1,4 @@
-package com.example.caller.adapters;
-import android.content.Context;
+package com.example.caller.ui.adapters;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;

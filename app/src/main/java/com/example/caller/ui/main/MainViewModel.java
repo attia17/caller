@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.caller.database.DataRepository;
 import com.example.caller.models.Contact;
 
 import java.util.List;

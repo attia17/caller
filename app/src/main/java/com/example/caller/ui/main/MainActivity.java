@@ -27,12 +27,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.caller.R;
-import com.example.caller.adapters.AdapterContact;
+import com.example.caller.ui.adapters.AdapterContact;
 import com.example.caller.models.Contact;
 import com.example.caller.ui.contactInfo.ContactInfo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

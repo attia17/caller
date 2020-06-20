@@ -1,102 +1,100 @@
-package com.example.caller.ui.main;
+package com.example.caller.database;
 
 import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.caller.database.ContactDao;
-import com.example.caller.database.MyDataBase;
 import com.example.caller.models.Contact;
 
 import java.util.List;
 
 public class DataRepository {
-    private ContactDao dao;
-    private LiveData<List<Contact>> liveData;
+    MyDataBase dataBase;
+    private LiveData<List<Contact>> listLiveData;
 
     public DataRepository(Application app) {
-        MyDataBase dataBase = MyDataBase.getInstance (app);
-        dao = dataBase.contactDao ();
-        liveData = dao.getAllContact ();
+        dataBase = MyDataBase.getInstance (app);
+        dataBase.contactDao ().getAllContact ();
+
     }
 
     public LiveData<List<Contact>> getAllData() {
-        return liveData;
+        return listLiveData;
     }
 
     public void insertContact(Contact contact) {
-        new InsertAsyncTask (dao).execute (contact);
+        new InsertAsyncTask (dataBase).execute (contact);
     }
 
     public void deleteContact(Contact contact) {
-        new DeleteAsyncTask (dao).execute (contact);
+        new DeleteAsyncTask (dataBase).execute (contact);
 
     }
 
     public void update(Contact contact) {
-        new UpdateAsyncTask (dao).execute (contact);
+        new UpdateAsyncTask (dataBase).execute (contact);
 
     }
 
     public void deleteAll() {
-        new DeleteAllAsyncTask (dao).execute ();
+        new DeleteAllAsyncTask (dataBase).execute ();
 
     }
 
     private static class InsertAsyncTask extends AsyncTask<Contact, Void, Void> {
-        private ContactDao dao;
+        private MyDataBase dataBase;
 
-        InsertAsyncTask(ContactDao dao) {
-            this.dao = dao;
+        InsertAsyncTask(MyDataBase dataBase) {
+            this.dataBase = dataBase;
         }
 
         @Override
         protected Void doInBackground(Contact... contact) {
-            dao.insertContact (contact[0]);
+            dataBase.contactDao ().insertContact (contact[0]);
             return null;
 
         }
     }
 
     private static class DeleteAsyncTask extends AsyncTask<Contact, Void, Void> {
-        ContactDao dao;
+        MyDataBase dataBase;
 
-        DeleteAsyncTask(ContactDao dao) {
-            this.dao = dao;
+        DeleteAsyncTask(MyDataBase dataBase) {
+            this.dataBase = dataBase;
         }
 
         @Override
         protected Void doInBackground(Contact... contacts) {
-            dao.deleteContact (contacts[0]);
+            dataBase.contactDao ().deleteContact (contacts[0]);
             return null;
         }
     }
 
     private static class UpdateAsyncTask extends AsyncTask<Contact, Void, Void> {
-        ContactDao dao;
+       MyDataBase dataBase;
 
-        UpdateAsyncTask(ContactDao dao) {
-            this.dao = dao;
+        UpdateAsyncTask(MyDataBase dataBase) {
+            this.dataBase = dataBase;
         }
 
         @Override
         protected Void doInBackground(Contact... contacts) {
-            dao.update (contacts[0]);
+            dataBase.contactDao ().update (contacts[0]);
             return null;
         }
     }
 
     private static class DeleteAllAsyncTask extends AsyncTask<Void, Void, Void> {
-        ContactDao dao;
+        MyDataBase dataBase;
 
-        DeleteAllAsyncTask(ContactDao dao) {
-            this.dao = dao;
+        DeleteAllAsyncTask(MyDataBase dataBase) {
+            this.dataBase = dataBase;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            dao.deleteAll ();
+            dataBase.contactDao ().deleteAll ();
             return null;
         }
     }
