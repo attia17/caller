@@ -20,28 +20,31 @@ public class DataRepository {
         dao = dataBase.contactDao ();
         liveData = dao.getAllContact ();
     }
-    public LiveData<List<Contact>> getAllData(){
+
+    public LiveData<List<Contact>> getAllData() {
         return liveData;
     }
 
-    public void insertContact(Contact contact){
+    public void insertContact(Contact contact) {
         new InsertAsyncTask (dao).execute (contact);
     }
 
-    public void deleteContact (Contact contact){
+    public void deleteContact(Contact contact) {
         new DeleteAsyncTask (dao).execute (contact);
 
     }
-    public void update(Contact contact){
+
+    public void update(Contact contact) {
         new UpdateAsyncTask (dao).execute (contact);
 
     }
-    public void deleteAll(){
+
+    public void deleteAll() {
         new DeleteAllAsyncTask (dao).execute ();
 
     }
 
-    private static class InsertAsyncTask extends AsyncTask<Contact,Void,Void> {
+    private static class InsertAsyncTask extends AsyncTask<Contact, Void, Void> {
         private ContactDao dao;
 
         InsertAsyncTask(ContactDao dao) {
@@ -56,7 +59,7 @@ public class DataRepository {
         }
     }
 
-    private static class DeleteAsyncTask extends AsyncTask<Contact,Void,Void>{
+    private static class DeleteAsyncTask extends AsyncTask<Contact, Void, Void> {
         ContactDao dao;
 
         DeleteAsyncTask(ContactDao dao) {
@@ -70,7 +73,7 @@ public class DataRepository {
         }
     }
 
-    private static class UpdateAsyncTask extends AsyncTask<Contact,Void,Void>{
+    private static class UpdateAsyncTask extends AsyncTask<Contact, Void, Void> {
         ContactDao dao;
 
         UpdateAsyncTask(ContactDao dao) {
@@ -84,7 +87,7 @@ public class DataRepository {
         }
     }
 
-    private static class DeleteAllAsyncTask extends AsyncTask<Void,Void,Void>{
+    private static class DeleteAllAsyncTask extends AsyncTask<Void, Void, Void> {
         ContactDao dao;
 
         DeleteAllAsyncTask(ContactDao dao) {

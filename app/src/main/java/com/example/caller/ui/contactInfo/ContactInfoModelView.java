@@ -6,18 +6,17 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.caller.ui.main.DataRepository;
 import com.example.caller.models.Contact;
 
 import java.util.List;
 
 public class ContactInfoModelView extends AndroidViewModel {
-    private DataRepository repository;
+    private InfoRepository repository;
     private LiveData<List<Contact>> liveData;
 
     public ContactInfoModelView(@NonNull Application application) {
         super (application);
-        repository = new DataRepository (application);
+        repository = new InfoRepository (application);
         liveData = repository.getAllData ();
     }
 
