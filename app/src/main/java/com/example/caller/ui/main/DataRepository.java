@@ -1,10 +1,12 @@
-package com.example.caller.database;
+package com.example.caller.ui.main;
 
 import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
+import com.example.caller.database.ContactDao;
+import com.example.caller.database.MyDataBase;
 import com.example.caller.models.Contact;
 
 import java.util.List;

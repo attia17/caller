@@ -1,21 +1,25 @@
 package com.example.caller.ui.main;
 
 import android.app.Application;
+import android.database.Cursor;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.caller.database.DataRepository;
 import com.example.caller.models.Contact;
 
 import java.util.List;
 
-public class MainViewModel extends AndroidViewModel {
+public class MainViewModel extends AndroidViewModel  {
     private DataRepository repository;
     private LiveData<List<Contact>> liveData;
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+    Cursor cursor;
+    String contactName;
+    String phNumber;
 
-    public MainViewModel(@NonNull Application application) {
+    public MainViewModel(@NonNull Application application ) {
         super (application);
         repository = new DataRepository (application);
         liveData = repository.getAllData ();
@@ -41,4 +45,6 @@ public class MainViewModel extends AndroidViewModel {
     public void deleteAll(Contact contact) {
         repository.deleteAll ();
     }
+
+
 }

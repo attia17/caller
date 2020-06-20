@@ -1,7 +1,12 @@
 package com.example.caller.ui.main;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,9 +16,12 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,13 +32,18 @@ import com.example.caller.models.Contact;
 import com.example.caller.ui.contactInfo.ContactInfo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-        public MainViewModel modelView;
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+    public MainViewModel modelView;
+    Cursor cursor;
+    String contactName;
+    String phNumber;
     private RecyclerView recyclerView;
     private FloatingActionButton button;
     private AdapterContact adapterContact;
@@ -41,11 +54,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView (R.layout.activity_main);
         intiView ();
         intiAdapter ();
-//        modelView = ViewModelProviders.of (this).get (MainViewModel.class);
-        modelView =  new ViewModelProvider (this).get (MainViewModel.class);
+        //check permission
+        final int permissionCheck = ContextCompat.checkSelfPermission (this, Manifest.permission.READ_CONTACTS);
+
+        modelView = ViewModelProviders.of (this).get (MainViewModel.class);
+//        modelView =  new ViewModelProvider (this).get (MainViewModel.class);
         modelView.getLiveData ().observe (this, new Observer<List<Contact>> () {
             @Override
             public void onChanged(List<Contact> contacts) {
+
                 if (contacts.size () == 0) {
                     Toast.makeText (MainActivity.this, "no Data to show", Toast.LENGTH_SHORT).show ();
                 }
@@ -60,6 +77,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            showContacts ();
+            Toast.makeText (MainActivity.this, "PERMISSION_GRANTED", Toast.LENGTH_SHORT).show ();
+        } else {
+            ActivityCompat.requestPermissions (MainActivity.this, new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+        }
         button.setOnClickListener (this);
 
         //swipe
@@ -69,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 passInfo (contact);
             }
         });
-        new ItemTouchHelper (new ItemTouchHelper.SimpleCallback (0,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper (new ItemTouchHelper.SimpleCallback (0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -77,15 +100,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                if (direction==8) {
+                if (direction == 8) {
                     Toast.makeText (MainActivity.this, "calling   "
-                            +adapterContact.getItemAt (viewHolder.getAdapterPosition ()).getName (), Toast.LENGTH_SHORT).show ();
+                            + adapterContact.getItemAt (viewHolder.getAdapterPosition ()).getName (), Toast.LENGTH_SHORT).show ();
                     adapterContact.notifyDataSetChanged ();
 
 
                 }
-                if (direction==4) {
-                    Toast.makeText (MainActivity.this, "message"+adapterContact.getItemAt (viewHolder.getAdapterPosition ()).getName (), Toast.LENGTH_SHORT).show ();
+                if (direction == 4) {
+                    Toast.makeText (MainActivity.this, "message" + adapterContact.getItemAt (viewHolder.getAdapterPosition ()).getName (), Toast.LENGTH_SHORT).show ();
                     adapterContact.notifyDataSetChanged ();
                 }
 
@@ -210,5 +233,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected (item);
     }
 
+  
+    @Override
+    public synchronized void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                Toast.makeText (this, "Contact Loaded", Toast.LENGTH_SHORT).show ();
+            } else {
+                requestMyPermission ();
+                Toast.makeText (this, "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show ();
+            }
+        }
 
+    }
+
+    void requestMyPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale (this, Manifest.permission.READ_CONTACTS)) {
+
+            new AlertDialog.Builder (this)
+                    .setTitle ("Permission needed")
+                    .setMessage ("This permission is needed because of this and that")
+                    .setPositiveButton ("ok", new DialogInterface.OnClickListener () {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions (MainActivity.this,
+                                    new String[]{Manifest.permission.READ_CONTACTS},
+                                    PERMISSIONS_REQUEST_READ_CONTACTS);
+                            requestMyPermission ();
+                        }
+                    })
+                    .setNegativeButton ("cancel", new DialogInterface.OnClickListener () {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss ();
+                        }
+                    })
+                    .create ().show ();
+        } else {
+            ActivityCompat.requestPermissions (this, new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+        }
+    }
+
+    private synchronized void  showContacts() {
+        cursor = getContentResolver ().query (ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC ");
+        assert cursor != null;
+        while (cursor.moveToNext ()) {
+            contactName = cursor.getString(cursor.getColumnIndex( ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME ));
+            phNumber = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            modelView.insert (new Contact (contactName,phNumber));
+        }
+        cursor.close ();
+
+    }
 }

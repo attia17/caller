@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.caller.R;
 import com.example.caller.models.Contact;
@@ -53,8 +54,8 @@ public class ContactInfo extends AppCompatActivity implements View.OnClickListen
             setTitle ("new contact");
             eMode = false;
         }
-        modelView = new ViewModelProvider (this).get (ContactInfoModelView.class);
-//        modelView = ViewModelProviders.of (ContactInfo.this).get (ContactInfoModelView.class);
+//        modelView = new ViewModelProvider (this).get (ContactInfoModelView.class);
+        modelView = ViewModelProviders.of (ContactInfo.this).get (ContactInfoModelView.class);
         button.setOnClickListener (this);
         imageButton.setOnClickListener (this);
     }

@@ -43,15 +43,15 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
-    def lifecycle_version = "2.2.0"
-    // ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    // LiveData
-    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
-    // Annotation processor
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+//    def lifecycle_version = "2.2.0"
+//    // ViewModel
+//    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+//    // LiveData
+//    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+//    // Annotation processor
+//    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
-//    // ViewModel and LiveData
-//    def lifecycle_version = "2.1.0"
-//    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    // ViewModel and LiveData
+    def lifecycle_version = "2.1.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
 }
